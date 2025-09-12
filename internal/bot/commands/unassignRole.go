@@ -4,12 +4,23 @@ import (
 	"context"
 	"fmt"
 	"role-manager-bot/internal/database"
+	"slices"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 func UnassignRole(ctx context.Context, s *discordgo.Session, i *discordgo.InteractionCreate) {
-	user := i.ApplicationCommandData().GetOption("user").UserValue(nil)
+	user, err := s.GuildMember(i.GuildID, i.ApplicationCommandData().GetOption("user").UserValue(nil).ID)
+	if err != nil {
+		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Flags:   discordgo.MessageFlagsEphemeral,
+				Content: "User must be a member of this server",
+			},
+		})
+		return
+	}
 	role := i.ApplicationCommandData().GetOption("role").RoleValue(nil, "")
 
 	if user == nil || role == nil {
@@ -46,7 +57,18 @@ func UnassignRole(ctx context.Context, s *discordgo.Session, i *discordgo.Intera
 		return
 	}
 
-	err = s.GuildMemberRoleRemove(i.GuildID, user.ID, role.ID)
+	if !slices.Contains(user.Roles, role.ID) {
+		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Flags:   discordgo.MessageFlagsEphemeral,
+				Content: "User doesn't have this role",
+			},
+		})
+		return
+	}
+
+	err = s.GuildMemberRoleRemove(i.GuildID, user.User.ID, role.ID)
 	if err != nil {
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -61,7 +83,7 @@ func UnassignRole(ctx context.Context, s *discordgo.Session, i *discordgo.Intera
 	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
-			Content: fmt.Sprintf("Unassigned <@&%s> from <@%s>", role.ID, user.ID),
+			Content: fmt.Sprintf("Unassigned <@&%s> from <@%s>", role.ID, user.User.ID),
 		},
 	})
 }
