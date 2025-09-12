@@ -9,7 +9,10 @@ import (
 	"github.com/uptrace/bun/dialect/pgdialect"
 )
 
-func IsParent(ctx context.Context, user *discordgo.Member, role *discordgo.Role) (bool, error) {
+func IsManager(ctx context.Context, user *discordgo.Member, role *discordgo.Role) (bool, error) {
+	if user.Permissions&discordgo.PermissionAdministrator != 0 {
+		return true, nil
+	}
 	var rolePairs []*models.RoleRoleManager
 	fmt.Println(user.Roles)
 	err := db.NewSelect().

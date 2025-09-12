@@ -9,22 +9,9 @@ import (
 )
 
 func UnassignRole(ctx context.Context, s *discordgo.Session, i *discordgo.InteractionCreate) {
-	options := i.ApplicationCommandData().Options
+	user := i.ApplicationCommandData().GetOption("user").UserValue(nil)
+	role := i.ApplicationCommandData().GetOption("role").RoleValue(nil, "")
 
-	member := i.Member
-	user := options[0].UserValue(nil)
-	role := options[1].RoleValue(nil, "")
-
-	if member == nil {
-		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Flags:   discordgo.MessageFlagsEphemeral,
-				Content: "This command must be used in a server",
-			},
-		})
-		return
-	}
 	if user == nil || role == nil {
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -36,7 +23,7 @@ func UnassignRole(ctx context.Context, s *discordgo.Session, i *discordgo.Intera
 		return
 	}
 
-	isParent, err := database.IsParent(ctx, member, role)
+	isParent, err := database.IsManager(ctx, i.Member, role)
 	if err != nil {
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,

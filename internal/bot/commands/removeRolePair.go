@@ -10,6 +10,16 @@ import (
 )
 
 func RemoveRelationship(ctx context.Context, s *discordgo.Session, i *discordgo.InteractionCreate) {
+	if i.Member.Permissions&discordgo.PermissionAdministrator == 0 {
+		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Flags:   discordgo.MessageFlagsEphemeral,
+				Content: "This command can be used only by an Administrator",
+			},
+		})
+		return
+	}
 	subCommandRole := i.ApplicationCommandData().GetOption("role")
 	subCommandUser := i.ApplicationCommandData().GetOption("user")
 
