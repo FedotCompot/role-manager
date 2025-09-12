@@ -169,16 +169,8 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 }
 
 func interactionCreate(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	if i.Type == discordgo.InteractionApplicationCommand {
-		switch i.ApplicationCommandData().Name {
-		case "create":
-			commands.CreateRelationship(botContext, s, i)
-		case "remove":
-			commands.RemoveRelationship(botContext, s, i)
-		case "assign":
-			commands.AssignRole(botContext, s, i)
-		case "unassign":
-			commands.UnassignRole(botContext, s, i)
-		}
+	switch i.Type {
+	case discordgo.InteractionApplicationCommand:
+		commands.HandleCommand(botContext, s, i)
 	}
 }
