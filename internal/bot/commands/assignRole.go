@@ -20,6 +20,7 @@ func AssignRole(ctx context.Context, s *discordgo.Session, i *discordgo.Interact
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
+				Flags:   discordgo.MessageFlagsEphemeral,
 				Content: "This command must be used in a server",
 			},
 		})
@@ -29,6 +30,7 @@ func AssignRole(ctx context.Context, s *discordgo.Session, i *discordgo.Interact
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
+				Flags:   discordgo.MessageFlagsEphemeral,
 				Content: "Both user and role are required",
 			},
 		})
@@ -40,6 +42,7 @@ func AssignRole(ctx context.Context, s *discordgo.Session, i *discordgo.Interact
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
+				Flags:   discordgo.MessageFlagsEphemeral,
 				Content: "Server error",
 			},
 		})
@@ -50,6 +53,7 @@ func AssignRole(ctx context.Context, s *discordgo.Session, i *discordgo.Interact
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
+				Flags:   discordgo.MessageFlagsEphemeral,
 				Content: "You do not have permission to manage this role.",
 			},
 		})
@@ -62,6 +66,7 @@ func AssignRole(ctx context.Context, s *discordgo.Session, i *discordgo.Interact
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
+				Flags:   discordgo.MessageFlagsEphemeral,
 				Content: "Failed to assign role.",
 			},
 		})

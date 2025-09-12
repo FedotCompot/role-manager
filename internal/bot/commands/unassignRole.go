@@ -19,6 +19,7 @@ func UnassignRole(ctx context.Context, s *discordgo.Session, i *discordgo.Intera
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
+				Flags:   discordgo.MessageFlagsEphemeral,
 				Content: "This command must be used in a server",
 			},
 		})
@@ -28,6 +29,7 @@ func UnassignRole(ctx context.Context, s *discordgo.Session, i *discordgo.Intera
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
+				Flags:   discordgo.MessageFlagsEphemeral,
 				Content: "Both user and role are required",
 			},
 		})
@@ -39,6 +41,7 @@ func UnassignRole(ctx context.Context, s *discordgo.Session, i *discordgo.Intera
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
+				Flags:   discordgo.MessageFlagsEphemeral,
 				Content: "Server error",
 			},
 		})
@@ -49,6 +52,7 @@ func UnassignRole(ctx context.Context, s *discordgo.Session, i *discordgo.Intera
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
+				Flags:   discordgo.MessageFlagsEphemeral,
 				Content: "You do not have permission to manage this role.",
 			},
 		})
@@ -60,6 +64,7 @@ func UnassignRole(ctx context.Context, s *discordgo.Session, i *discordgo.Intera
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
+				Flags:   discordgo.MessageFlagsEphemeral,
 				Content: "Failed to unassign role.",
 			},
 		})

@@ -21,6 +21,7 @@ func RemoveRelationship(ctx context.Context, s *discordgo.Session, i *discordgo.
 			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
+					Flags:   discordgo.MessageFlagsEphemeral,
 					Content: "Failed to remove role relationship.",
 				},
 			})
@@ -41,6 +42,7 @@ func RemoveRelationship(ctx context.Context, s *discordgo.Session, i *discordgo.
 			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
+					Flags:   discordgo.MessageFlagsEphemeral,
 					Content: "Failed to remove user relationship.",
 				},
 			})
@@ -57,6 +59,7 @@ func RemoveRelationship(ctx context.Context, s *discordgo.Session, i *discordgo.
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
+				Flags:   discordgo.MessageFlagsEphemeral,
 				Content: "Parent user or role has to be provided",
 			},
 		})
