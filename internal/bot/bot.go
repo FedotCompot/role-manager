@@ -7,6 +7,8 @@ import (
 	"role-manager-bot/internal/bot/commands"
 	"role-manager-bot/internal/bot/features"
 	"role-manager-bot/internal/config"
+	"role-manager-bot/internal/database"
+	"role-manager-bot/internal/models"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -20,9 +22,17 @@ func Init(ctx context.Context) func() {
 		panic(err)
 	}
 	botContext = ctx
-	session.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuilds | discordgo.IntentsGuildMembers)
+	session.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuilds | discordgo.IntentsGuildMembers | discordgo.IntentsGuildMessageReactions | discordgo.IntentGuildMessages)
 	session.AddHandler(ready)
 	session.AddHandler(interactionCreate)
+	session.AddHandler(func(_ *discordgo.Session, event *discordgo.GuildCreate) {
+		for _, guild := range session.State.Guilds {
+			if guild.ID == event.Guild.ID {
+				return
+			}
+		}
+		database.UpdateGuildDefaultSettings(botContext, event.Guild.ID)
+	})
 	features.Init(ctx, session)
 
 	err = session.Open()
@@ -161,12 +171,45 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 				},
 			},
 		},
+		{
+			Name:        "settings",
+			Description: "Server settings for this bot",
+			Options: []*discordgo.ApplicationCommandOption{
+
+				{
+					Type:        discordgo.ApplicationCommandOptionSubCommand,
+					Name:        "get",
+					Description: "List this servers settings",
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionSubCommandGroup,
+					Name:        "set",
+					Description: "Change setting for this server",
+					Options: []*discordgo.ApplicationCommandOption{
+						{
+							Type:        discordgo.ApplicationCommandOptionSubCommand,
+							Name:        string(models.SETTING_RANDOM_REACTION_CHANCE),
+							Description: "Chance to randomly react to a message",
+							Options: []*discordgo.ApplicationCommandOption{
+								{
+									Type:        discordgo.ApplicationCommandOptionInteger,
+									Name:        "value",
+									Description: "Higher - less likely to react (1/chance)\n Default: 100",
+									Required:    true,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 	fmt.Println("Updating commands...")
 	_, err := s.ApplicationCommandBulkOverwrite(s.State.User.ID, "", commands)
 	if err != nil {
 		slog.Error("Cannot create commands", "error", err)
 	}
+	database.UpdateDefaultSettings(botContext)
 	fmt.Println("Bot is ready!")
 }
 

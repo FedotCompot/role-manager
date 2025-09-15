@@ -1,23 +1,41 @@
 package features
 
 import (
+	"context"
+	"log/slog"
 	"math/rand/v2"
+	"reflect"
+	"role-manager-bot/internal/database"
+	"role-manager-bot/internal/models"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-const CHANCE = 100 // 1/CHANCE probability
+const defaultChance uint = 100
 
-func RandomReactions(s *discordgo.Session, i *discordgo.MessageCreate) {
+func randomReactions(ctx context.Context, s *discordgo.Session, i *discordgo.MessageCreate) {
+	slog.Info("Random reaction")
 	if i.Member == nil {
 		return
 	}
-	if rand.UintN(CHANCE) > 0 {
+	slog.Info("Random reaction")
+	emojiChance := defaultChance
+	settings, err := database.GetGuildSettings(ctx, i.GuildID)
+	if err == nil {
+		slog.Info("DB chance", "chance", settings[models.SETTING_RANDOM_REACTION_CHANCE], "type", reflect.TypeOf(settings[models.SETTING_RANDOM_REACTION_CHANCE]))
+		if dbChance, ok := settings[models.SETTING_RANDOM_REACTION_CHANCE].(float64); ok {
+			emojiChance = uint(dbChance)
+		}
+	}
+	slog.Info("Random reaction", "chance", emojiChance)
+	if rand.UintN(emojiChance) > 0 {
 		return
 	}
 	emojis, err := s.GuildEmojis(i.GuildID)
-	if err != nil {
+	slog.Info("Random reaction chance proc", "emojis", emojis, "err", err)
+	if err != nil || len(emojis) == 0 {
 		return
 	}
-	s.MessageReactionAdd(i.ChannelID, i.Message.ID, emojis[rand.IntN(len(emojis))].ID)
+	err = s.MessageReactionAdd(i.ChannelID, i.Message.ID, emojis[rand.IntN(len(emojis))].APIName())
+	slog.Error("Failed adding reaction", "error", err)
 }

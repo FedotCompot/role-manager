@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"fmt"
+	"role-manager-bot/internal/bot/utils"
 	"role-manager-bot/internal/database"
 	"role-manager-bot/internal/models"
 
@@ -10,7 +11,7 @@ import (
 )
 
 func CreateRelationship(ctx context.Context, s *discordgo.Session, i *discordgo.InteractionCreate) {
-	if i.Member.Permissions&discordgo.PermissionAdministrator == 0 {
+	if !utils.IsAdmin(i.Member) {
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{

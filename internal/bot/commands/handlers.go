@@ -26,5 +26,7 @@ func HandleCommand(ctx context.Context, s *discordgo.Session, i *discordgo.Inter
 		AssignRole(ctx, s, i)
 	case "unassign":
 		UnassignRole(ctx, s, i)
+	case "settings":
+		GuildSettings(ctx, s, i)
 	}
 }
