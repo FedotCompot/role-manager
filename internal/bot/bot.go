@@ -205,6 +205,28 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 				},
 			},
 		},
+		{
+			Name:        "roll",
+			Description: "Roll a random number (0-100)",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionInteger,
+					Name:        "min",
+					MinValue:    &zero,
+					MaxValue:    999,
+					Description: "Min value",
+					Required:    false,
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionInteger,
+					Name:        "max",
+					MinValue:    &zero,
+					MaxValue:    999,
+					Description: "Max value",
+					Required:    false,
+				},
+			},
+		},
 	}
 	fmt.Println("Updating commands...")
 	_, err := s.ApplicationCommandBulkOverwrite(s.State.User.ID, "", commands)
