@@ -11,7 +11,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-const defaultChance uint = 100
+const defaultChance float64 = 1
 
 func randomReactions(ctx context.Context, s *discordgo.Session, i *discordgo.MessageCreate) {
 	slog.Info("Random reaction")
@@ -24,11 +24,11 @@ func randomReactions(ctx context.Context, s *discordgo.Session, i *discordgo.Mes
 	if err == nil {
 		slog.Info("DB chance", "chance", settings[models.SETTING_RANDOM_REACTION_CHANCE], "type", reflect.TypeOf(settings[models.SETTING_RANDOM_REACTION_CHANCE]))
 		if dbChance, ok := settings[models.SETTING_RANDOM_REACTION_CHANCE].(float64); ok {
-			emojiChance = uint(dbChance)
+			emojiChance = dbChance
 		}
 	}
 	slog.Info("Random reaction", "chance", emojiChance)
-	if rand.UintN(emojiChance) > 0 {
+	if rand.Float64()*100 > emojiChance {
 		return
 	}
 	emojis, err := s.GuildEmojis(i.GuildID)

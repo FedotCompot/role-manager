@@ -45,7 +45,7 @@ func Init(ctx context.Context) func() {
 }
 
 func ready(s *discordgo.Session, event *discordgo.Ready) {
-
+	zero := float64(0)
 	commands := []*discordgo.ApplicationCommand{
 		{
 			Name:        "create",
@@ -192,9 +192,11 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 							Description: "Chance to randomly react to a message",
 							Options: []*discordgo.ApplicationCommandOption{
 								{
-									Type:        discordgo.ApplicationCommandOptionInteger,
+									Type:        discordgo.ApplicationCommandOptionNumber,
 									Name:        "value",
-									Description: "Higher - less likely to react (1/chance)\n Default: 100",
+									MinValue:    &zero,
+									MaxValue:    100,
+									Description: "Percent chance \nDefault: 1%",
 									Required:    true,
 								},
 							},

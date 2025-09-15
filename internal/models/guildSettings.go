@@ -19,7 +19,7 @@ var guildSettingsFromString map[string]GuildSetting = map[string]GuildSetting{
 	"random_reaction_chance": SETTING_RANDOM_REACTION_CHANCE,
 }
 var GuildSettingsDefaults map[GuildSetting]any = map[GuildSetting]any{
-	SETTING_RANDOM_REACTION_CHANCE: uint(100),
+	SETTING_RANDOM_REACTION_CHANCE: float64(1),
 }
 
 func GuildSettingFromSting(setting string) (GuildSetting, bool) {
