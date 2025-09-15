@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"role-manager-bot/internal/bot/commands"
+	"role-manager-bot/internal/bot/features"
 	"role-manager-bot/internal/config"
 
 	"github.com/bwmarrin/discordgo"
@@ -22,6 +23,7 @@ func Init(ctx context.Context) func() {
 	session.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuilds | discordgo.IntentsGuildMembers)
 	session.AddHandler(ready)
 	session.AddHandler(interactionCreate)
+	features.Init(ctx, session)
 
 	err = session.Open()
 	if err != nil {
